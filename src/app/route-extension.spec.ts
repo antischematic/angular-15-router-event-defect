@@ -17,15 +17,22 @@ describe("Route extension", () => {
 
     router.navigate(["/root"])
     flush()
-    // not needed here for some reason
-    // fixture.detectChanges()
+    // this can be called before detectChanges for some reason
     expect(console.log).toHaveBeenCalledWith("root")
+    // autoDetectChanges doesn't work, have to call manually
+    fixture.detectChanges()
+    // but this will fail unless change detection is run manually
+    expect(fixture.nativeElement.textContent).toContain("root")
 
     router.navigate(["/root/test/nested"])
     flush()
-    // but IS needed here
+    // autoDetectChanges doesn't work, have to call manually
     fixture.detectChanges()
+    // these must be called AFTER detectChanges or the test fails
     expect(console.log).toHaveBeenCalledWith("test")
     expect(console.log).toHaveBeenCalledWith("nested")
+
+    expect(fixture.nativeElement.textContent).toContain("test")
+    expect(fixture.nativeElement.textContent).toContain("nested")
   }))
 })
